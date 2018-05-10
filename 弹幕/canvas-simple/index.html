@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>弹幕</title>
+        <style>
+            .main{
+                margin: auto;
+                width: 640px;
+            }
+            .bg {
+                height: 360px;
+                background: #f00;
+                animation: bgColor 10s infinite alternate;
+            }
+            canvas {
+                position: absolute;
+            }
+
+            @keyframes bgColor {
+                25% {
+                    background-color: darkred;
+                }
+                50% {
+                    background-color: darkgreen;
+                }
+                75% {
+                    background-color: darkblue;
+                }
+                100% {
+                    background-color: silver;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div class="main">
+            <canvas id="canvasBarrage" width="640" height="360"></canvas>
+            <div class="bg"></div>
+        </div>
+    </body>
+
+    <script>
+
+    // 弹幕数据
+    var dataBarrage = [{
+        value: '使用的是静态死数据',
+        color: 'blue',
+        range: [0, 0.5]
+    }, {
+        value: '随机循环播放',
+        color: 'blue',
+        range: [0, 0.6]
+    }, {
+        value: '可以控制区域和垂直分布范围',
+        color: 'blue',
+        range: [0, 0.5]
+    }, {
+        value: '字体大小和速度在方法内设置',
+        color: 'black',
+        range: [0.1, 1]
+    }, {
+        value: '适合用在一些静态页面上',
+        color: 'black',
+        range: [0.2, 1]
+    }, {
+        value: '基于canvas实现',
+        color: 'black',
+        range: [0.2, 0.9]
+    }, {
+        value: '因此IE9+浏览器才支持',
+        color: 'black',
+        range: [0.2, 1]
+    }, {
+        value: '可以设置边框颜色',
+        color: 'black',
+        range: [0.2, 1]
+    }, {
+        value: '文字颜色默认都是白色',
+        color: 'black',
+        range: [0.2, 0.9]
+    }, {
+        value: '若文字颜色不想白色',
+        color: 'black',
+        range: [0.2, 1]
+    }, {
+        value: '需要自己调整下JS',
+        color: 'black',
+        range: [0.6, 0.7]
+    }, {
+        value: '如果需要的是真实和视频交互的弹幕',
+        color: 'black',
+        range: [0.2, 1]
+    }, {
+        value: '可以回到原文',
+        color: 'black',
+        range: [0, 0.9]
+    }, {
+        value: '查看另外一个demo',
+        color: 'black',
+        range: [0.7, 1]
+    }, {
+        value: '下面就是占位弹幕了',
+        color: 'black',
+        range: [0.7, 0.95]
+    }, {
+        value: '前方高能预警！！！',
+        color: 'orange',
+        range: [0.5, 0.8]
+    }, {
+        value: '前方高能预警！！！',
+        color: 'orange',
+        range: [0.5, 0.9]
+    }, {
+        value: '前方高能预警！！！',
+        color: 'orange',
+        range: [0, 1]
+    }, {
+        value: '前方高能预警！！！',
+        color: 'orange',
+        range: [0, 1]
+    }];
+
+    // 弹幕方法
+    var canvasBarrage = function (canvas, data) {
+
+        var context = canvas.getContext('2d');
+
+        var fontSize = 28;
+
+        var width = canvas.width,
+            height = canvas.height;
+
+        var Barrage = function (obj, index) {
+            
+            var _width = (1 + index * 0.1 / Math.random()) * width
+            var _height = obj.range[0] * height + (obj.range[1] - obj.range[0]) * Math.random() * height + 36;
+            if (_height < fontSize) {
+                _height = fontSize;
+            } else if (_height > height - fontSize) {
+                _height = height - fontSize;
+            }
+            
+            this.x = _width;
+            this.y = _height;
+            this.moveX = 1 + Math.random() * 3;
+            this.opacity = 0.8 + 0.2 * Math.random();
+            this.draw = function () {
+                context.font = 'bold ' + fontSize + 'px "microsoft yahei"';
+                context.fillStyle = 'rgba(255, 255, 255, '+ this.opacity +')';
+                context.fillText(obj.value, this.x, this.y);
+                context.strokeStyle = obj.color;
+                context.strokeText(obj.value, this.x, this.y);
+            }
+        }   
+
+        var barrageList = dataBarrage.map(function(item, index){
+            return new Barrage(item, index)
+        })
+
+        var draw = function () {
+            barrageList.forEach((barrage, index) => {
+                barrage.x -= barrage.moveX;
+                if (barrage.x < -canvas.width) {
+                    barrage = new Barrage(dataBarrage[index], index);
+                    barrageList[index] = barrage;
+                }
+                barrage.draw()
+            })
+        }
+
+        // 画布渲染
+        var render = function () {
+            context.clearRect(0, 0, width, height)
+            draw()
+
+            //继续渲染
+            requestAnimationFrame(render)
+        };
+
+        render();
+    };
+
+    canvasBarrage(document.getElementById('canvasBarrage'), dataBarrage);
+
+    </script>
+</html>
