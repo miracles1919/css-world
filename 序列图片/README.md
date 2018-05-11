@@ -1,3 +1,8 @@
+## 序列图片视频化播放
+> [参考文章](www.zhangxinxu.com/wordpress/2018/05/image-sequence-html5-video-play/)
+
+此效果根据上述文章就可以实现
+
 ### 如何把视频变成序列图片
 [FFmpeg](https://ffmpeg.zeranoe.com/builds/)
 
