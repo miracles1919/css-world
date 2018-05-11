@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>序列图片</title>
+        <style>
+
+        </style>
+    </head>
+    <body>
+        <div>
+            <button id="play">播放</button>
+            <button id="pause">暂停</button>
+            <button id="stop">停止</button>
+            <div id="container"></div>
+            
+        </div>
+
+        <script>
+            var container = document.getElementById('container')
+            var playBtn = document.getElementById('play')
+            var pauseBtn = document.getElementById('pause')
+            var stopBtn = document.getElementById('stop')
+            var i = 0, imgLen = 99
+
+            // 存储预加载的图片
+            var imgList = []
+
+            // 图片预加载
+            for (var i = 1; i <= imgLen; i++) {
+                (function (i) {
+                    var img = new Image()
+                    img.onload = function () {
+                        imgList.push(this)
+                        if(i === 1) {
+                            container.append(this)
+                        }
+
+                        // 自动播放 可以解决ios不能自动播放问题
+                        // play()
+                    }
+                    img.onerror = function () {
+                        imgList.push(false)
+
+                        // 自动播放
+                        play()
+                    }
+                    img.src = './img/' + i + '.jpg'
+                    img.style = 'width: 100%'
+                })(i)
+            }
+            
+            var index = 1
+            var timer = null
+            var play = function () {
+                // container.innerHTML = ''
+                if (imgList.length < imgLen) {
+                    return
+                }
+                var step = function () {
+                    if (imgList[index -1]) {
+                        container.removeChild(imgList[index - 1])
+                    }
+                    container.append(imgList[index])
+                    index++
+                    if (index < imgList.length) {
+                        timer = setTimeout(step, 100)
+                    }
+                }
+                setTimeout(step, 100)
+            }
+
+            var pause = function () {
+                clearTimeout(timer)
+            }
+
+            var stop = function () {
+                clearTimeout(timer)
+                container.innerHTML = ''
+                container.append(imgList[0])
+                index = 1
+            }
+
+            playBtn.onclick = play
+            pauseBtn.onclick = pause
+            stopBtn.onclick = stop
+
+
+        </script>
+    </body>
+</html>
